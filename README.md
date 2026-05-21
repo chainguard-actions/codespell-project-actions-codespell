@@ -6,7 +6,7 @@ Hardened by [Chainguard](https://www.chainguard.dev) from the upstream action at
 
 | Version | Tag | Upstream commit |
 |---------|-----|-----------------|
-| v2.2 | [`v2.2`](https://github.com/chainguard-actions/codespell-project--actions-codespell/tree/v2.2) | — |
+| v2.2 | [`v2.2`](https://github.com/chainguard-actions/codespell-project-actions-codespell/tree/v2.2) | — |
 
 ## Privacy
 
