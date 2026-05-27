@@ -1,5 +1,7 @@
 # codespell-project/actions-codespell
 
+Codespell with annotations for Pull Request
+
 Hardened by [Chainguard](https://www.chainguard.dev) from the upstream action at [https://github.com/codespell-project/actions-codespell](https://github.com/codespell-project/actions-codespell).
 
 ## Versions
