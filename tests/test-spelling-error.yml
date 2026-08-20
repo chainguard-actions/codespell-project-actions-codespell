@@ -1,0 +1,27 @@
+name: Test spelling error detection
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - id: action
+        name: Run codespell on committed fixture files with spelling errors
+        uses: .
+        with:
+          path: tests/fixtures/errors
+        continue-on-error: true
+
+      - name: Assert codespell detected spelling errors and failed
+        env:
+          OUTCOME: ${{ steps.action.outcome }}
+        run: |
+          echo "outcome: $OUTCOME"
+          if [ "$OUTCOME" = "failure" ]; then
+            echo "PASS: codespell correctly detected spelling errors and failed"
+          else
+            echo "FAIL: expected codespell to fail due to spelling errors, but outcome was '$OUTCOME'"
+            exit 1
+          fi

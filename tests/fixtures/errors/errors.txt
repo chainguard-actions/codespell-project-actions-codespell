@@ -1,0 +1,2 @@
+This is teh file with speling errors.
+The recieve function is importent.

@@ -1,0 +1,27 @@
+name: Test only_warn mode - errors found but exit success
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - id: action
+        name: Run codespell in only_warn mode on committed fixture files with spelling errors
+        uses: .
+        with:
+          path: tests/fixtures/errors
+          only_warn: "1"
+
+      - name: Assert codespell succeeded despite spelling errors (only_warn mode)
+        env:
+          OUTCOME: ${{ steps.action.outcome }}
+        run: |
+          echo "outcome: $OUTCOME"
+          if [ "$OUTCOME" = "success" ]; then
+            echo "PASS: codespell exited successfully in only_warn mode despite spelling errors"
+          else
+            echo "FAIL: expected codespell to succeed in only_warn mode, but outcome was '$OUTCOME'"
+            exit 1
+          fi

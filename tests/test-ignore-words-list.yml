@@ -1,0 +1,27 @@
+name: Test ignore_words_list - ignored words should not cause failure
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - id: action
+        name: Run codespell with ignore_words_list containing the misspelled word
+        uses: .
+        with:
+          path: tests/fixtures/ignore
+          ignore_words_list: "teh"
+
+      - name: Assert codespell passed because the misspelled word was ignored
+        env:
+          OUTCOME: ${{ steps.action.outcome }}
+        run: |
+          echo "outcome: $OUTCOME"
+          if [ "$OUTCOME" = "success" ]; then
+            echo "PASS: codespell correctly ignored the word in ignore_words_list"
+          else
+            echo "FAIL: expected codespell to pass with ignored words, but outcome was '$OUTCOME'"
+            exit 1
+          fi
