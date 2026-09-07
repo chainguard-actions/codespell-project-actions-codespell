@@ -1,0 +1,24 @@
+name: Test add-matcher workflow command is emitted
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Run action via uses to register problem matcher
+        id: action
+        uses: .
+
+      - name: Assert action step succeeded
+        env:
+          OUTCOME: ${{ steps.action.outcome }}
+        run: |
+          echo "outcome: $OUTCOME"
+          if [ "$OUTCOME" = "success" ]; then
+            echo "PASS: action step completed successfully - add-matcher command was emitted"
+          else
+            echo "FAIL: action step did not succeed, outcome was '$OUTCOME'"
+            exit 1
+          fi

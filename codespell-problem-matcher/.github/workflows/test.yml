@@ -1,0 +1,41 @@
+name: Test
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test-stable:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@61b9e3751b92087fd0b06925ba6dd6314e06f089 # master
+    - uses: actions/setup-python@0f07f7f756721ebd886c2462646a35f78a8bc4de # v1
+    - run: pip install codespell
+    - uses: ./
+    - name: Check codespell
+      run: codespell test/test.txt || true
+    - name: Check codespell on an unusually named file
+      run: codespell test/test:2.txt || true
+    - name: Check codespell on a binary file
+      run: codespell test/test.bin || true
+  test-master:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@61b9e3751b92087fd0b06925ba6dd6314e06f089 # master
+    - uses: actions/setup-python@7f4fc3e22c37d6ff65e88745f38bd3157c663f7c # v4
+      with:
+        python-version:3.x
+    - run: pip install git+https://github.com/codespell-project/codespell.git
+    - uses: ./
+    - name: Check codespell
+      run: codespell test/test.txt || true
+    - name: Check codespell on an unusually named file
+      run: codespell test/test:2.txt || true
+    - name: Check codespell on a binary file
+      run: codespell test/test.bin || true

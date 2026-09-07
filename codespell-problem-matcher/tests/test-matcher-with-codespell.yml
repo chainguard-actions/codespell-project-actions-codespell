@@ -1,0 +1,81 @@
+name: Test problem matcher with codespell output
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Register codespell problem matcher
+        id: action
+        uses: .
+
+      - name: Assert matcher registration succeeded
+        env:
+          OUTCOME: ${{ steps.action.outcome }}
+        run: |
+          echo "matcher registration outcome: $OUTCOME"
+          if [ "$OUTCOME" = "success" ]; then
+            echo "PASS: problem matcher registered successfully"
+          else
+            echo "FAIL: problem matcher registration failed, outcome was '$OUTCOME'"
+            exit 1
+          fi
+
+      - name: Install codespell
+        run: |
+          pip install codespell --quiet --break-system-packages 2>/dev/null || \
+          pip install codespell --quiet 2>/dev/null || \
+          pip3 install codespell --quiet --break-system-packages 2>/dev/null || \
+          pip3 install codespell --quiet 2>/dev/null || \
+          apt-get install -y codespell 2>/dev/null || \
+          { echo "FAIL: could not install codespell"; exit 1; }
+          export PATH="$HOME/.local/bin:$PATH"
+          if command -v codespell >/dev/null 2>&1; then
+            echo "PASS: codespell available: $(codespell --version 2>&1 || true)"
+          else
+            echo "FAIL: codespell not found after install"
+            exit 1
+          fi
+
+      - name: Create a file with a spelling mistake
+        run: |
+          mkdir -p /tmp/test-spelling
+          echo "This is a teh test file with a speling mistake." > /tmp/test-spelling/sample.txt
+          echo "Created test file:"
+          cat /tmp/test-spelling/sample.txt
+
+      - name: Run codespell and capture output
+        id: codespell
+        run: |
+          export PATH="$HOME/.local/bin:$PATH"
+          set +e
+          OUTPUT=$(codespell /tmp/test-spelling/sample.txt 2>&1)
+          EXIT_CODE=$?
+          set -e
+          echo "codespell output: $OUTPUT"
+          echo "exit_code=$EXIT_CODE" >> "$GITHUB_OUTPUT"
+          {
+            echo "output<<EOF"
+            echo "$OUTPUT"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Assert codespell found spelling errors
+        env:
+          EXIT_CODE: ${{ steps.codespell.outputs.exit_code }}
+          OUTPUT: ${{ steps.codespell.outputs.output }}
+        run: |
+          echo "exit_code: $EXIT_CODE"
+          echo "output: $OUTPUT"
+          if [ "$EXIT_CODE" = "0" ]; then
+            echo "FAIL: expected codespell to find spelling errors but it exited 0"
+            exit 1
+          fi
+          if echo "$OUTPUT" | grep -qiE '(teh|speling)'; then
+            echo "PASS: codespell detected spelling errors as expected"
+          else
+            echo "FAIL: expected codespell to report spelling errors in output"
+            exit 1
+          fi
