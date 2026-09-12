@@ -9,7 +9,7 @@ Hardened by [Chainguard](https://www.chainguard.dev) from the upstream action at
 | Version | Tag | Upstream commit |
 |---------|-----|-----------------|
 | v2.2 | [`v2.2`](https://github.com/chainguard-actions/codespell-project-actions-codespell/tree/v2.2) | [`8f01853`](https://github.com/codespell-project/actions-codespell/commit/8f01853be192eb0f849a5c7d721450e7a467c579) |
-| v2.4.3 | [`v2.4.3`](https://github.com/chainguard-actions/codespell-project-actions-codespell/tree/v2.4.3) | [`e3258cc`](https://github.com/codespell-project/actions-codespell/commit/e3258cca84ce02b0bb36a3d41f2c18f719a0cc1a) |
+| v2.4.3 | [`v2.4.3`](https://github.com/chainguard-actions/codespell-project-actions-codespell/tree/v2.4.3) | — |
 
 ## Privacy
 
